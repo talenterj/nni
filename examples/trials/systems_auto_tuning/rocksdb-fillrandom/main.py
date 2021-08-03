@@ -22,11 +22,60 @@ import logging
 LOG = logging.getLogger('rocksdb-fillrandom')
 
 
+def generate_args(parameters):
+    args = []
+    # Set low priority parameters based on high priority parameters
+    # if parameters['memtablerep'] != "skip_list":
+    #     parameters['allow_concurrent_memtable_write'] = False
+    # Combine conflict parameters with same priority
+    for k, v in parameters.items():
+        if k == "io_method":
+            if v == 0:
+                args.append("--mmap_read=0")
+                args.append("--use_direct_reads=0")
+                args.append("--mmap_write=0")
+                args.append("--use_direct_io_for_flush_and_compaction=0")
+            elif v == 1:
+                args.append("--mmap_read=0")
+                args.append("--use_direct_reads=0")
+                args.append("--mmap_write=0")
+                args.append("--use_direct_io_for_flush_and_compaction=1")
+            elif v == 2:
+                args.append("--mmap_read=0")
+                args.append("--use_direct_reads=0")
+                args.append("--mmap_write=1")
+                args.append("--use_direct_io_for_flush_and_compaction=0")
+            elif v == 4:
+                args.append("--mmap_read=0")
+                args.append("--use_direct_reads=1")
+                args.append("--mmap_write=0")
+                args.append("--use_direct_io_for_flush_and_compaction=0")
+            elif v == 5:
+                args.append("--mmap_read=0")
+                args.append("--use_direct_reads=1")
+                args.append("--mmap_write=0")
+                args.append("--use_direct_io_for_flush_and_compaction=1")
+            elif v == 8:
+                args.append("--mmap_read=1")
+                args.append("--use_direct_reads=0")
+                args.append("--mmap_write=0")
+                args.append("--use_direct_io_for_flush_and_compaction=0")
+            elif v == 10:
+                args.append("--mmap_read=1")
+                args.append("--use_direct_reads=0")
+                args.append("--mmap_write=1")
+                args.append("--use_direct_io_for_flush_and_compaction=0")
+        else:
+            args.append("--{}={}".format(k, v))
+    return args
+
+
 def run(**parameters):
     '''Run rocksdb benchmark and return throughput'''
     bench_type = parameters['benchmarks']
     # recover args
-    args = ["--{}={}".format(k, v) for k, v in parameters.items()]
+    args = generate_args(parameters)
+    print(args)
     # subprocess communicate
     process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
     out, err = process.communicate()
@@ -60,7 +109,7 @@ def generate_params(received_params):
         "key_size": 20,
         "value_size": 100,
         "num": 13107200,
-        "db": "/tmp/rockdb",
+        "db": "/mnt/vdc/rocksdb",
         "disable_wal": 1,
         "max_background_flushes": 1,
         "max_background_compactions": 4,
@@ -75,7 +124,12 @@ def generate_params(received_params):
     }
 
     for k, v in received_params.items():
-        params[k] = int(v)
+        if isinstance(v, str):
+            params[k] = str(v)
+        elif isinstance(v, float) and 1 > v > 0:
+            params[k] = float(v)
+        else:
+            params[k] = int(v)
 
     return params
 
