@@ -40,6 +40,8 @@ create table ExperimentProfile (
     nextSequenceId integer,
     revision integer);
 create index ExperimentProfile_id on ExperimentProfile(id);
+
+create table SystemResource(timestamp integer, trialJobId text, CPU_usage text, IOPS text, BPS text, Mem_usage text);
 `;
 
 function loadExperimentProfile(row: any): ExperimentProfile {
