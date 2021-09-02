@@ -31,6 +31,8 @@ interface MetricData {
     readonly trial_job_id: string;
     readonly type: MetricType;
     readonly sequence: number;
+    readonly cpu_usage: string;
+    readonly memory_usage: string;
     readonly value: any;
 }
 
@@ -40,6 +42,8 @@ interface MetricDataRecord {
     readonly parameterId: string;
     readonly type: MetricType;
     readonly sequence: number;
+    readonly cpu_usage: string;
+    readonly memory_usage: string;
     readonly data: any;
 }
 
