@@ -153,8 +153,8 @@ def report_final_result(metric):
         'trial_job_id': trial_env_vars.NNI_TRIAL_JOB_ID,
         'type': 'FINAL',
         'sequence': 0,
-	'cpu_usage': cpu_usage,
-	'memory_usage': memory_usage,
+        'cpu_usage': cpu_usage,
+        'memory_usage': memory_usage,
         'value': to_json(metric)
     })
     platform.send_metric(metric)

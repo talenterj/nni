@@ -143,6 +143,8 @@ class NNIDataStore implements DataStore {
                 parameterId: metrics.parameter_id,
                 type: metrics.type,
                 sequence: metrics.sequence,
+                cpu_usage: metrics.cpu_usage,
+                memory_usage: metrics.memory_usage,
                 data: metrics.value,
                 timestamp: Date.now()
             }));
