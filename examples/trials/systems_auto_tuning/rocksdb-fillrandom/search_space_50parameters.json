@@ -1,0 +1,234 @@
+{
+    "write_buffer_size": {
+        "_type": "uniform",
+        "_value": [2097152, 268435456]
+    },
+    "level0_file_num_compaction_trigger": {
+        "_type": "quniform",
+        "_value": [2, 16, 1]
+    },
+    "max_bytes_for_level_base": {
+        "_type": "uniform",
+        "_value": [67108864, 1073741824]
+    },
+    "max_write_buffer_number": {
+        "_type": "quniform",
+        "_value": [1, 8, 1]
+    },
+    "min_write_buffer_number_to_merge": {
+        "_type": "quniform",
+        "_value": [2, 16, 1]
+    },
+    "level0_slowdown_writes_trigger": {
+        "_type": "quniform",
+        "_value": [10, 40, 5]
+    },
+    "level0_stop_writes_trigger": {
+        "_type": "quniform",
+        "_value": [30, 60, 5]
+    },
+    "target_file_size_base": {
+        "_type": "uniform",
+        "_value": [8388608, 536870912]
+    },
+    "target_file_size_multiplier": {
+        "_type": "quniform",
+        "_value": [1, 10, 1]
+    },
+    "level_compaction_dynamic_level_bytes": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "max_bytes_for_level_multiplier": {
+        "_type": "quniform",
+        "_value": [2, 16, 1]
+    },
+    "disable_auto_compactions": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "soft_pending_compaction_bytes_limit": {
+        "_type": "uniform",
+        "_value": [34359738368, 137438953472]
+    },
+    "hard_pending_compaction_bytes_limit": {
+        "_type": "uniform",
+        "_value": [137438953472, 549755813888]
+    },
+    "compaction_style": {
+        "_type": "choice",
+        "_value": [0, 1, 2]
+    },
+    "compaction_pri": {
+        "_type": "choice",
+        "_value": [0, 1, 2, 3]
+    },
+    "max_background_jobs": {
+        "_type": "quniform",
+        "_value": [2, 16, 1]
+    },
+    "subcompactions": {
+        "_type": "quniform",
+        "_value": [1, 8, 1]
+    },
+    "compaction_fadvice": {
+        "_type": "choice",
+        "_value": [0, 1, 2, 3]
+    },
+    "compaction_readahead_size": {
+        "_type": "uniform",
+        "_value": [0, 4194304]
+    },
+    "io_method": {
+        "_type": "choice",
+        "_value": [0, 1, 2, 4, 5, 8, 10]
+    },
+    "use_adaptive_mutex": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "bytes_per_sync": {
+        "_type": "uniform",
+        "_value": [0, 4194304]
+    },
+    "wal_bytes_per_sync": {
+        "_type": "uniform",
+        "_value": [0, 4194304]
+    },
+    "enable_pipelined_write": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "allow_concurrent_memtable_write": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "enable_write_thread_adaptive_yield": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "write_thread_max_yield_usec": {
+        "_type": "quniform",
+        "_value": [50, 150, 10]
+    },
+    "write_thread_slow_yield_usec": {
+        "_type": "quniform",
+        "_value": [1, 10, 1]
+    },
+    "use_hash_search": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "prefix_size": {
+        "_type": "quniform",
+        "_value": [1, 10, 1]
+    },
+    "use_data_block_hash_index": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "data_block_hash_table_util_ratio": {
+        "_type": "quniform",
+        "_value": [0.5, 1.0, 0.1]
+    },
+    "block_size": {
+        "_type": "uniform",
+        "_value": [1024, 1048576]
+    },
+    "block_restart_interval": {
+        "_type": "quniform",
+        "_value": [1, 20, 1]
+    },
+    "metadata_block_size": {
+        "_type": "uniform",
+        "_value": [1024, 1048576]
+    },
+    "index_block_restart_interval": {
+        "_type": "quniform",
+        "_value": [1, 20, 1]
+    },
+    "partition_index": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "partition_index_and_filters": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "enable_index_compression": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "index_shortening_mode": {
+        "_type": "choice",
+        "_value": [0, 1, 2]
+    },
+    "cache_numshardbits": {
+        "_type": "quniform",
+        "_value": [1, 8, 1]
+    },
+    "table_cache_numshardbits": {
+        "_type": "quniform",
+        "_value": [1, 8, 1]
+    },
+    "cache_size": {
+        "_type": "uniform",
+        "_value": [8388608, 268435456]
+    },
+    "cache_high_pri_pool_ratio": {
+        "_type": "quniform",
+        "_value": [0, 1, 0.1]
+    },
+    "cache_index_and_filter_blocks": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "pin_l0_filter_and_index_blocks_in_cache": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "pin_top_level_index_and_filter": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "optimize_filters_for_hits": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "bloom_bits": {
+        "_type": "quniform",
+        "_value": [0, 20, 1]
+    },
+    "rate_limiter_bytes_per_sec": {
+        "_type": "quniform",
+        "_value": [0, 209715200, 20971520]
+    },
+    "rate_limiter_auto_tuned": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "enable_io_prio": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "enable_cpu_prio": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "memtable_use_huge_page": {
+        "_type": "choice",
+        "_value": [0, 1]
+    },
+    "compression_type": {
+        "_type": "choice",
+        "_value": [0, 1, 2, 3, 4, 5, 6, 7]
+    },
+    "arena_block_size": {
+        "_type": "uniform",
+        "_value": [4096, 4194304]
+    },
+    "num_levels": {
+        "_type": "quniform",
+        "_value": [1, 10, 1]
+    }
+}
