@@ -26,7 +26,7 @@ create table TrialJobEvent (timestamp integer, trialJobId text, event text, data
 create index TrialJobEvent_trialJobId on TrialJobEvent(trialJobId);
 create index TrialJobEvent_event on TrialJobEvent(event);
 
-create table MetricData (timestamp integer, trialJobId text, parameterId text, type text, sequence integer, data text);
+create table MetricData (timestamp integer, trialJobId text, parameterId text, type text, sequence integer, cpu_usage text, memory_usage text, data text);
 create index MetricData_trialJobId on MetricData(trialJobId);
 create index MetricData_type on MetricData(type);
 
@@ -40,9 +40,8 @@ create table ExperimentProfile (
     nextSequenceId integer,
     revision integer);
 create index ExperimentProfile_id on ExperimentProfile(id);
-
-create table SystemResource(timestamp integer, trialJobId text, CPU_usage text, IOPS text, BPS text, Mem_usage text);
 `;
+ //create table SystemResource(timestamp integer, trialJobId text, CPU_usage text, IOPS text, BPS     text, Mem_usage text);
 
 function loadExperimentProfile(row: any): ExperimentProfile {
     return {
@@ -205,9 +204,9 @@ class SqlDB implements Database {
     }
 
     public storeMetricData(trialJobId: string, data: string): Promise<void> {
-        const sql: string = 'insert into MetricData values (?,?,?,?,?,?)';
+        const sql: string = 'insert into MetricData values (?,?,?,?,?,?,?,?)';
         const json: MetricDataRecord = JSON.parse(data);
-        const args: any[] = [Date.now(), json.trialJobId, json.parameterId, json.type, json.sequence, JSON.stringify(json.data)];
+        const args: any[] = [Date.now(), json.trialJobId, json.parameterId, json.type, json.sequence, json.cpu_usage, json.memory_usage, JSON.stringify(json.data)];
 
         this.log.trace(`storeMetricData: SQL: ${sql}, args: ${JSON.stringify(args)}`);
         const deferred: Deferred<void> = new Deferred<void>();

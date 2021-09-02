@@ -6,6 +6,7 @@ import sys
 import json
 import time
 import subprocess
+#import psutil
 
 from ..env_vars import trial_env_vars
 from nni.utils import to_json
@@ -63,7 +64,10 @@ def send_metric(string):
         assert len(string) < 1000000, 'Metric too long'
         print("NNISDK_MEb'%s'" % (string), flush=True)
     else:
-        data = (string + '\n').encode('utf8')
+	#cpu_usage = to_json(psutil.cpu_percent(1)
+	#memory_usage = to_json(psutil.virtual_memory().percent)
+        #data = (string + cpu_usage + memory_usage +'\n').encode('utf8')
+        data = (string +'\n').encode('utf8')
         assert len(data) < 1000000, 'Metric too long'
         _metric_file.write(b'ME%06d%b' % (len(data), data))
         _metric_file.flush()
