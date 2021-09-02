@@ -75,6 +75,8 @@ function loadMetricData(row: any): MetricDataRecord {
         parameterId: row.parameterId,
         type: row.type,
         sequence: row.sequence,
+	cpu_usage: row.cpu_usage,
+	memory_usage: row.memory_usage,
         data: row.data
     };
 }

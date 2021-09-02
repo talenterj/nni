@@ -173,6 +173,8 @@ export class MockedNNIManager extends Manager {
                 parameterId: '123',
                 type: 'FINAL',
                 sequence: 0,
+                cpu_usage: '0',
+		memory_usage: '0',
                 data: '0.2'
             }]
         };
@@ -187,6 +189,8 @@ export class MockedNNIManager extends Manager {
                 parameterId: '123',
                 type: 'FINAL',
                 sequence: 0,
+		cpu_usage: '0',
+                memory_usage: '0',	
                 data: '0.2'
             }]
         };
