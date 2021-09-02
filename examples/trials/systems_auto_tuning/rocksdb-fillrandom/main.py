@@ -18,9 +18,13 @@
 import nni
 import subprocess
 import logging
+import psutil
+from numpy import *
 
 LOG = logging.getLogger('rocksdb-fillrandom')
 
+cpu_trial = 0
+memory_trial = 0
 
 def generate_args(parameters):
     args = []
@@ -79,6 +83,15 @@ def run(**parameters):
     # subprocess communicate
     process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
     out, err = process.communicate()
+    list_cpu = [0, 0, 0, 0, 0]
+    list_mem = [0, 0, 0, 0, 0]
+    for x in range(5):
+        list_cpu[x] = psutil.cpu_percent(5)
+        list_mem[x] = psutil.virtual_memory().used
+
+    cpu_trial = (int)(mean(list_cpu) * 10) / 10
+    memory_trial = (int)(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+
     # split into lines
     lines = out.decode("utf8").splitlines()
 
@@ -144,7 +157,7 @@ if __name__ == "__main__":
         # run benchmark
         throughput = run(**PARAMS)
         # report throughput to nni
-        nni.report_final_result(throughput)
+        nni.report_final_result(throughput, cpu_trial, memory_trial)
     except Exception as exception:
         LOG.exception(exception)
         raise

@@ -4,7 +4,7 @@
 from .utils import to_json
 from .runtime.env_vars import trial_env_vars
 from .runtime import platform
-import psutil
+# import psutil
 
 __all__ = [
     'get_next_parameter',
@@ -134,7 +134,7 @@ def report_intermediate_result(metric):
     _intermediate_seq += 1
     platform.send_metric(metric)
 
-def report_final_result(metric):
+def report_final_result(metric, cpu_trial , mem_trial):
     """
     Reports final result to NNI.
 
@@ -144,8 +144,8 @@ def report_final_result(metric):
         Usually (for built-in tuners to work), it should be a number, or
         a dict with key "default" (a number), and any other extra keys.
     """
-    cpu_usage = to_json(psutil.cpu_percent(1))
-    memory_usage = to_json(psutil.virtual_memory().percent)
+    cpu_usage = cpu_trial
+    memory_usage = mem_trial
     assert _params or trial_env_vars.NNI_PLATFORM is None, \
         'nni.get_next_parameter() needs to be called before report_final_result'
     metric = to_json({
