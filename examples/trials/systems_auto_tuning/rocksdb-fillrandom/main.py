@@ -91,8 +91,10 @@ def run(**parameters):
 
     #cpu_trial = (int)(mean(list_cpu) * 10) / 10
     #memory_trial = (int)(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
-    global cpu_trial = 1
-    global cpu_trial = 1
+    global cpu_trial 
+    cpu_trial = 1 
+    global memory_trial
+    memory_trial = 1
     # split into lines
     lines = out.decode("utf8").splitlines()
 
