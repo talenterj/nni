@@ -23,8 +23,7 @@ from numpy import *
 
 LOG = logging.getLogger('rocksdb-fillrandom')
 
-cpu_trial_high = 0
-cpu_trial_low = 0
+cpu_trial_avg = 0
 memory_trial = 0
 
 def generate_args(parameters):
@@ -81,25 +80,20 @@ def run(**parameters):
     # recover args
     args = generate_args(parameters)
     # print(args)
-    list_cpu_high = []
-    list_cpu_low = []
+    list_cpu_avg = []
     list_mem = []
+    #create a sbuprocess to run db_bench 
     process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
+    #process.poll() detect subprocess finished ;A None value indicates that the process hasn’t terminated yet.A negative value -N indicates that the child was terminated by signal N
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
-        #list_mem.append(1)
+        #statistic cpu_percent per 0.1s
         tmp = psutil.cpu_percent(0.1)
-        if tmp > 20:
-            list_cpu_high.append(tmp)
-        elif tmp > 0:
-            list_cpu_low.append(tmp)
-
-    global cpu_trial_high 
-    cpu_trial_high = (int)(mean(list_cpu_high) * 10) / 10
-    #cpu_trial_high = 1 
-    global cpu_trial_low
-    cpu_trial_low = (int)(mean(list_cpu_low) * 10) / 10
-    #cpu_trial_low =1
+        list_cpu_avg.append(tmp)
+    
+    #in python global var need to state in local func first
+    global cpu_trial_avg
+    cpu_trial_avg = (int)(mean(list_cpu_avg) * 10) / 10
     global memory_trial
     memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
     
@@ -118,6 +112,7 @@ def run(**parameters):
             break
 
     results = {}
+    #db_bench result select throughout ops/s
     for line in match_lines:
         key, _, value = line.partition(":")
         key = key.strip()
@@ -170,7 +165,7 @@ if __name__ == "__main__":
         # run benchmark
         throughput = run(**PARAMS)
         # report throughput to nni
-        nni.report_final_result(throughput, cpu_trial_low, memory_trial)
+        nni.report_final_result(throughput, cpu_trial_avg, memory_trial)
     except Exception as exception:
         LOG.exception(exception)
         raise
