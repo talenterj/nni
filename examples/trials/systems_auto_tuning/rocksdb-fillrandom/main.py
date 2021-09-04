@@ -80,29 +80,31 @@ def run(**parameters):
     bench_type = parameters['benchmarks']
     # recover args
     args = generate_args(parameters)
-    print(args)
-    # subprocess communicate
-    process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
-    out, err = process.communicate()
+    # print(args)
     list_cpu_high = []
     list_cpu_low = []
     list_mem = []
+    process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
     while process.poll() == None:
-        list_mem[x] = psutil.virtual_memory().used
+        list_mem.append(psutil.virtual_memory().used)
+        #list_mem.append(1)
         tmp = psutil.cpu_percent(0.1)
         if tmp > 20:
             list_cpu_high.append(tmp)
-        else:
+        elif tmp > 0:
             list_cpu_low.append(tmp)
 
     global cpu_trial_high 
     cpu_trial_high = (int)(mean(list_cpu_high) * 10) / 10
-    #cpu_trial = 1 
+    #cpu_trial_high = 1 
     global cpu_trial_low
     cpu_trial_low = (int)(mean(list_cpu_low) * 10) / 10
+    #cpu_trial_low =1
     global memory_trial
-    memory_trial = (int)(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
-    #memory_trial = 1
+    memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+    
+    # get db_bench result after process finished
+    out, err = process.communicate()
     # split into lines
     lines = out.decode("utf8").splitlines()
 
