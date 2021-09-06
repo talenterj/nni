@@ -100,13 +100,13 @@ def run(**parameters):
     global memory_trial
     memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
 
-    cpu_90 = np.percentile(cpu_trial_avg, 90)
-    cpu_95 = np.percentile(cpu_trial_avg, 95)
-    cpu_99 = np.percentile(cpu_trial_avg, 99)
-    list_cpu_result.append(cpu_trial_avg)
-    list_cpu_result.append(cpu_90)
-    list_cpu_result.append(cpu_95)
-    list_cpu_result.append(cpu_99)
+    cpu_90 = int(np.percentile(list_cpu_avg, 90) * 10) / 10
+    cpu_95 = int(np.percentile(list_cpu_avg, 95) * 10) / 10
+    cpu_99 = int(np.percentile(list_cpu_avg, 99) * 10) / 10
+    list_cpu_result.append("%s%s" % ("avg: ", str(cpu_trial_avg)))
+    list_cpu_result.append("%s%s" % ("90: ", str(cpu_90)))
+    list_cpu_result.append("%s%s" % ("95: ", str(cpu_95)))
+    list_cpu_result.append("%s%s" % ("99: ", str(cpu_99)))
 
     
     # get db_bench result after process finished

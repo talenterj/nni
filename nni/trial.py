@@ -144,6 +144,7 @@ def report_final_result(metric, list_cpu_result , mem_trial):
         Usually (for built-in tuners to work), it should be a number, or
         a dict with key "default" (a number), and any other extra keys.
     """
+    # .join need item in sequence are str
     cpu_usage = " ".join(list_cpu_result)
     memory_usage = str(mem_trial)
 
