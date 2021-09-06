@@ -144,8 +144,9 @@ def report_final_result(metric, list_cpu_result , mem_trial):
         Usually (for built-in tuners to work), it should be a number, or
         a dict with key "default" (a number), and any other extra keys.
     """
-    cpu_usage = str(list_cpu_result)
+    cpu_usage = " ".join(list_cpu_result)
     memory_usage = str(mem_trial)
+
     assert _params or trial_env_vars.NNI_PLATFORM is None, \
         'nni.get_next_parameter() needs to be called before report_final_result'
     metric = to_json({

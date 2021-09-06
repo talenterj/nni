@@ -20,14 +20,14 @@ import subprocess
 import logging
 import psutil
 import numpy as np
+
 from numpy import *
 
 LOG = logging.getLogger('rocksdb-fillrandom')
 
 cpu_trial_avg = 0
 memory_trial = 0
-list_cpu_result []
-#test remote-server
+list_cpu_result = []
 
 def generate_args(parameters):
     args = []
@@ -85,7 +85,7 @@ def run(**parameters):
     # print(args)
     list_cpu_avg = []
     list_mem = []
-    #create a sbuprocess to run db_bench 
+    #create a sbuprocess to run db_bench
     process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
     #process.poll() detect subprocess finished ;A None value indicates that the process hasn’t terminated yet.A negative value -N indicates that the child was terminated by signal N
     while process.poll() == None:
@@ -99,10 +99,14 @@ def run(**parameters):
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
     memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+
     cpu_90 = np.percentile(cpu_trial_avg, 90)
     cpu_95 = np.percentile(cpu_trial_avg, 95)
     cpu_99 = np.percentile(cpu_trial_avg, 99)
-    list_cpu_result.append(cpu_trial_avg, cpu_90, cpu_95, cpu_99)
+    list_cpu_result.append(cpu_trial_avg)
+    list_cpu_result.append(cpu_90)
+    list_cpu_result.append(cpu_95)
+    list_cpu_result.append(cpu_99)
 
     
     # get db_bench result after process finished
