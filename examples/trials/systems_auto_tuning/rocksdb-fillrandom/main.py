@@ -98,7 +98,8 @@ def run(**parameters):
     global cpu_trial_avg
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
-    memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+    memory_trial_int = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+    memory_trial = "%s%s" % (memory_trial_int, "G")
 
     cpu_90 = int(np.percentile(list_cpu_avg, 90) * 10) / 10
     cpu_95 = int(np.percentile(list_cpu_avg, 95) * 10) / 10
