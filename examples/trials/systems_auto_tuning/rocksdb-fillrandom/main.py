@@ -19,12 +19,15 @@ import nni
 import subprocess
 import logging
 import psutil
+import numpy as np
 from numpy import *
 
 LOG = logging.getLogger('rocksdb-fillrandom')
 
 cpu_trial_avg = 0
 memory_trial = 0
+list_cpu_result []
+#test remote-server
 
 def generate_args(parameters):
     args = []
@@ -93,9 +96,14 @@ def run(**parameters):
     
     #in python global var need to state in local func first
     global cpu_trial_avg
-    cpu_trial_avg = (int)(mean(list_cpu_avg) * 10) / 10
+    cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
     memory_trial = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
+    cpu_90 = np.percentile(cpu_trial_avg, 90)
+    cpu_95 = np.percentile(cpu_trial_avg, 95)
+    cpu_99 = np.percentile(cpu_trial_avg, 99)
+    list_cpu_result.append(cpu_trial_avg, cpu_90, cpu_95, cpu_99)
+
     
     # get db_bench result after process finished
     out, err = process.communicate()
@@ -165,7 +173,7 @@ if __name__ == "__main__":
         # run benchmark
         throughput = run(**PARAMS)
         # report throughput to nni
-        nni.report_final_result(throughput, cpu_trial_avg, memory_trial)
+        nni.report_final_result(throughput, list_cpu_result, memory_trial)
     except Exception as exception:
         LOG.exception(exception)
         raise
