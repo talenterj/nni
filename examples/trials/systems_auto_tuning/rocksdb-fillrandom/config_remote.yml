@@ -1,0 +1,34 @@
+authorName: default
+experimentName: auto_rocksdb_TPE
+trialConcurrency: 3 
+maxExecDuration: 12h
+maxTrialNum: 256
+#choice: local, remote, pai
+trainingServicePlatform: remote
+searchSpacePath: search_space.json
+#choice: true, false
+useAnnotation: false
+tuner:
+  #choice: TPE, Random, Anneal, Evolution, BatchTuner, MetisTuner
+  #SMAC (SMAC should be installed through nnictl)
+  builtinTunerName: TPE
+  classArgs:
+    #choice: maximize, minimize
+    optimize_mode: maximize
+trial:
+  command: python3 main.py
+  codeDir: .
+  gpuNum: 0
+
+#distribute trials to remote server,log by ssh-key
+machineList:
+  #trial-1
+  - ip: 192.168.1.4
+    username: root
+    sshKeyPath: /root/kp-x5oszr3r
+  - ip: 192.168.1.5
+    username: root
+    sshKeyPath: /root/kp-x5oszr3r
+  - ip: 192.168.1.6
+    username: root
+    sshKeyPath: /root/kp-x5oszr3r
