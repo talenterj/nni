@@ -1,6 +1,6 @@
 authorName: default
 experimentName: auto_rocksdb_TPE
-trialConcurrency: 3 
+trialConcurrency: 5
 maxExecDuration: 12h
 maxTrialNum: 256
 #choice: local, remote, pai
@@ -22,7 +22,7 @@ trial:
 
 #distribute trials to remote server,log by ssh-key
 machineList:
-  #trial-1
+  #trial 1-5
   - ip: 192.168.1.4
     username: root
     sshKeyPath: /root/kp-x5oszr3r
@@ -30,5 +30,11 @@ machineList:
     username: root
     sshKeyPath: /root/kp-x5oszr3r
   - ip: 192.168.1.6
+    username: root
+    sshKeyPath: /root/kp-x5oszr3r
+  - ip: 192.168.1.7
+    username: root
+    sshKeyPath: /root/kp-x5oszr3r
+  - ip: 192.168.1.8
     username: root
     sshKeyPath: /root/kp-x5oszr3r
