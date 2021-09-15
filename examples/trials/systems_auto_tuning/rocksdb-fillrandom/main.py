@@ -140,9 +140,9 @@ def generate_params(received_params):
     params = {
         "benchmarks": "fillrandom",
         "threads": 1,
-        "key_size": 20,
+        "key_size": 16,
         "value_size": 100,
-        "num": 13107200,
+        "num": 10000000,
         "db": "/mnt/vdc/rocksdb",
         "disable_wal": 1,
         "max_background_flushes": 1,
