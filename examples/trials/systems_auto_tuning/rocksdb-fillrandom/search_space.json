@@ -1,62 +1,6 @@
 {
     "write_buffer_size": {
-        "_type": "uniform",
-        "_value": [2097152, 268435456]
-    },
-    "max_write_buffer_number": {
         "_type": "quniform",
-        "_value": [1, 8, 1]
-    },
-    "block_size": {
-        "_type": "uniform",
-        "_value": [1024, 1048576]
-    },
-    "target_file_size_base": {
-        "_type": "uniform",
-        "_value": [8388608, 536870912]
-    },
-     "max_bytes_for_level_multiplier": {
-        "_type": "quniform",
-        "_value": [2, 16, 1]
-    },
-    "level0_file_num_compaction_trigger": {
-        "_type": "quniform",
-        "_value": [2, 16, 1]
-    },
-     "min_write_buffer_number_to_merge": {
-        "_type": "quniform",
-        "_value": [2, 16, 1]
-    },
-   "level0_slowdown_writes_trigger": {
-        "_type": "quniform",
-        "_value": [10, 40, 5]
-    },
-    "level0_stop_writes_trigger": {
-        "_type": "quniform",
-        "_value": [30, 60, 5]
-    },
-    "disable_auto_compactions": {
-        "_type": "choice",
-        "_value": [0, 1]
-    },
-    "soft_pending_compaction_bytes_limit": {
-        "_type": "uniform",
-        "_value": [34359738368, 137438953472]
-    },
-  "max_background_jobs": {
-        "_type": "quniform",
-        "_value": [2, 16, 1]
-    },
- "hard_pending_compaction_bytes_limit": {
-        "_type": "uniform",
-        "_value": [137438953472, 549755813888]
-    },
-   "optimize_filters_for_hits": {
-        "_type": "choice",
-        "_value": [0, 1]
-    },
-   "bloom_bits": {
-        "_type": "quniform",
-        "_value": [0, 20, 1]
+        "_value": [2097152, 268435456, 1048576]
     }
 }

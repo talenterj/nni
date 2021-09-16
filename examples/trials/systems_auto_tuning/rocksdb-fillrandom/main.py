@@ -138,7 +138,7 @@ def run(**parameters):
 def generate_params(received_params):
     '''generate parameters based on received parameters'''
     params = {
-        "benchmarks": "fillrandom",
+        "benchmarks": "readrondom",
         "threads": 1,
         "key_size": 16,
         "value_size": 100,
