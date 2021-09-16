@@ -2,5 +2,9 @@
     "write_buffer_size": {
         "_type": "quniform",
         "_value": [2097152, 268435456, 1048576]
+    },
+    "block_size": {
+        "_type": "uniform",
+        "_value": [1024, 1048576]
     }
 }
