@@ -73,7 +73,7 @@ def generate_args(parameters):
         #         args.append("--mmap_write=1")
         #         args.append("--use_direct_io_for_flush_and_compaction=0")
         # else:
-            args.append("--{}={}".format(k, v))
+            args.append("{}={}".format(k, v))
     return args
 
 
