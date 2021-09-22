@@ -126,19 +126,21 @@ def run(**parameters):
         else:
             continue
 
+    oper_count = 1.0
+    time = 1.0
     # db_bench result select throughout ops/s
     for line in oper_count_lines:
         _, _, value = line.partition("=")
         value = value.strip('"')
         oper_count = float(value)
 
-    for line in match_lines:
+    for line in time_lines:
         _, _, value = line.partition(",")
         value = value.strip('ms')
         value = value.strip('takes ')
         time = float(value)
 
-    ops = int((oper_count / time) * 10) /10
+    ops = int((oper_count / time) * 10) / 10
     return ops
 
 
