@@ -19,15 +19,15 @@ import nni
 import subprocess
 import logging
 import psutil
-import numpy as np
 
 from numpy import *
 
-LOG = logging.getLogger('rocksdb-fillrandom')
+LOG = logging.getLogger('rocksdb-workloadb')
 
 cpu_trial_avg = 0
 memory_trial = 0
 list_cpu_result = []
+
 
 def generate_args(parameters):
     args = []
@@ -36,65 +36,65 @@ def generate_args(parameters):
     #     parameters['allow_concurrent_memtable_write'] = False
     # Combine conflict parameters with same priority
     for k, v in parameters.items():
-        if k == "io_method":
-            if v == 0:
-                args.append("--mmap_read=0")
-                args.append("--use_direct_reads=0")
-                args.append("--mmap_write=0")
-                args.append("--use_direct_io_for_flush_and_compaction=0")
-            elif v == 1:
-                args.append("--mmap_read=0")
-                args.append("--use_direct_reads=0")
-                args.append("--mmap_write=0")
-                args.append("--use_direct_io_for_flush_and_compaction=1")
-            elif v == 2:
-                args.append("--mmap_read=0")
-                args.append("--use_direct_reads=0")
-                args.append("--mmap_write=1")
-                args.append("--use_direct_io_for_flush_and_compaction=0")
-            elif v == 4:
-                args.append("--mmap_read=0")
-                args.append("--use_direct_reads=1")
-                args.append("--mmap_write=0")
-                args.append("--use_direct_io_for_flush_and_compaction=0")
-            elif v == 5:
-                args.append("--mmap_read=0")
-                args.append("--use_direct_reads=1")
-                args.append("--mmap_write=0")
-                args.append("--use_direct_io_for_flush_and_compaction=1")
-            elif v == 8:
-                args.append("--mmap_read=1")
-                args.append("--use_direct_reads=0")
-                args.append("--mmap_write=0")
-                args.append("--use_direct_io_for_flush_and_compaction=0")
-            elif v == 10:
-                args.append("--mmap_read=1")
-                args.append("--use_direct_reads=0")
-                args.append("--mmap_write=1")
-                args.append("--use_direct_io_for_flush_and_compaction=0")
-        else:
+        # if k == "io_method":
+        #     if v == 0:
+        #         args.append("--mmap_read=0")
+        #         args.append("--use_direct_reads=0")
+        #         args.append("--mmap_write=0")
+        #         args.append("--use_direct_io_for_flush_and_compaction=0")
+        #     elif v == 1:
+        #         args.append("--mmap_read=0")
+        #         args.append("--use_direct_reads=0")
+        #         args.append("--mmap_write=0")
+        #         args.append("--use_direct_io_for_flush_and_compaction=1")
+        #     elif v == 2:
+        #         args.append("--mmap_read=0")
+        #         args.append("--use_direct_reads=0")
+        #         args.append("--mmap_write=1")
+        #         args.append("--use_direct_io_for_flush_and_compaction=0")
+        #     elif v == 4:
+        #         args.append("--mmap_read=0")
+        #         args.append("--use_direct_reads=1")
+        #         args.append("--mmap_write=0")
+        #         args.append("--use_direct_io_for_flush_and_compaction=0")
+        #     elif v == 5:
+        #         args.append("--mmap_read=0")
+        #         args.append("--use_direct_reads=1")
+        #         args.append("--mmap_write=0")
+        #         args.append("--use_direct_io_for_flush_and_compaction=1")
+        #     elif v == 8:
+        #         args.append("--mmap_read=1")
+        #         args.append("--use_direct_reads=0")
+        #         args.append("--mmap_write=0")
+        #         args.append("--use_direct_io_for_flush_and_compaction=0")
+        #     elif v == 10:
+        #         args.append("--mmap_read=1")
+        #         args.append("--use_direct_reads=0")
+        #         args.append("--mmap_write=1")
+        #         args.append("--use_direct_io_for_flush_and_compaction=0")
+        # else:
             args.append("--{}={}".format(k, v))
     return args
 
 
 def run(**parameters):
     '''Run rocksdb benchmark and return throughput'''
-    bench_type = parameters['benchmarks']
+    # bench_type = parameters['benchmarks']
     # recover args
     args = generate_args(parameters)
     # print(args)
     list_cpu_avg = []
     list_mem = []
-    #create a sbuprocess to run db_bench
-    process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
-    #process.poll() detect subprocess finished ;A None value indicates that the process hasn’t terminated yet.A negative value -N indicates that the child was terminated by signal N
+    # create a subprocess to run db_bench
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloadb', '-p'] + args, stdout=subprocess.PIPE)
+    # process.poll() detect subprocess finished
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
-        #statistic cpu_percent per 0.1s
+        # statistic cpu_percent per 0.1s
         tmp = psutil.cpu_percent(0.1)
         list_cpu_avg.append(tmp)
     
-    #in python global var need to state in local func first
+    # in python global var need to state in local func first
     global cpu_trial_avg
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
@@ -109,52 +109,54 @@ def run(**parameters):
     list_cpu_result.append("%s%s" % ("95: ", str(cpu_95)))
     list_cpu_result.append("%s%s" % ("99: ", str(cpu_99)))
 
-    
     # get db_bench result after process finished
     out, err = process.communicate()
     # split into lines
     lines = out.decode("utf8").splitlines()
 
-    match_lines = []
+    oper_count_lines = []
+    time_lines = []
     for line in lines:
         # find the line with matched str
-        if bench_type not in line:
-            continue
-        else:
-            match_lines.append(line)
+        if 'recordcount' in line:
+            oper_count_lines.append(line)
+        elif 'finish' in line:
+            time_lines.append(line)
             break
+        else:
+            continue
 
-    results = {}
-    #db_bench result select throughout ops/s
+    # db_bench result select throughout ops/s
+    for line in oper_count_lines:
+        _, _, value = line.partition("=")
+        value = value.strip('"')
+        oper_count = float(value)
+
     for line in match_lines:
-        key, _, value = line.partition(":")
-        key = key.strip()
-        value = value.split("op")[1]
-        results[key] = float(value)
+        _, _, value = line.partition(",")
+        value = value.strip('ms')
+        value = value.strip('takes ')
+        time = float(value)
 
-    return results[bench_type]
+    ops = int((oper_count / time) * 10) /10
+    return ops
 
 
 def generate_params(received_params):
     '''generate parameters based on received parameters'''
     params = {
-        "benchmarks": "fillrandom",
-        "threads": 1,
-        "key_size": 16,
-        "value_size": 100,
-        "num": 10000000,
-        "db": "/mnt/vdc/rocksdb",
-        "disable_wal": 1,
-        "max_background_flushes": 1,
-        "max_background_compactions": 4,
-        "write_buffer_size": 67108864,
-        "max_write_buffer_number": 16,
-        "min_write_buffer_number_to_merge": 2,
-        "level0_file_num_compaction_trigger": 2,
-        "max_bytes_for_level_base": 268435456,
-        "max_bytes_for_level_multiplier": 10,
-        "target_file_size_base": 33554432,
-        "target_file_size_multiplier": 1
+        "rocksdb.dir": "/mnt/vdc/rocksdb",
+        "rocksdb.write_buffer_size": 2097152,
+        "rocksdb.block_size": 1024
+        # "max_background_compactions": 4,
+        # "write_buffer_size": 67108864,
+        # "max_write_buffer_number": 16,
+        # "min_write_buffer_number_to_merge": 2,
+        # "level0_file_num_compaction_trigger": 2,
+        # "max_bytes_for_level_base": 268435456,
+        # "max_bytes_for_level_multiplier": 10,
+        # "target_file_size_base": 33554432,
+        # "target_file_size_multiplier": 1
     }
 
     for k, v in received_params.items():
