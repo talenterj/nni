@@ -23,7 +23,7 @@ import numpy as np
 
 from numpy import *
 
-LOG = logging.getLogger('rocksdb-workloadb')
+LOG = logging.getLogger('rocksdb-workloada')
 
 cpu_trial_avg = 0
 memory_trial = 0
@@ -87,7 +87,7 @@ def run(**parameters):
     list_cpu_avg = []
     list_mem = []
     # create a subprocess to run db_bench
-    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloadb', '-p'] + args, stdout=subprocess.PIPE)
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada', '-p'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
