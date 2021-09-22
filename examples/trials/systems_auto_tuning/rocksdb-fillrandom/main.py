@@ -19,6 +19,7 @@ import nni
 import subprocess
 import logging
 import psutil
+import numpy as np
 
 from numpy import *
 
@@ -140,7 +141,7 @@ def run(**parameters):
         value = value.strip('takes ')
         time = float(value)
 
-    ops = int((oper_count / time) * 10) / 10
+    ops = int((oper_count * 1000 / time) * 10) / 10
     return ops
 
 
@@ -177,10 +178,12 @@ if __name__ == "__main__":
         # get parameters from tuner
         RECEIVED_PARAMS = nni.get_next_parameter()
         LOG.debug(RECEIVED_PARAMS)
+        # print(RECEIVED_PARAMS)
         PARAMS = generate_params(RECEIVED_PARAMS)
         LOG.debug(PARAMS)
         # run benchmark
         throughput = run(**PARAMS)
+        LOG.debug(throughput)
         # report throughput to nni
         nni.report_final_result(throughput, list_cpu_result, memory_trial)
     except Exception as exception:
