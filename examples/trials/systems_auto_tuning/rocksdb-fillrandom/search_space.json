@@ -3,8 +3,4 @@
         "_type": "quniform",
         "_value": [33554432, 268435456, 1048576]
     }
-//   "rocksdb.block_size": {
-//        "_type": "quniform",
-//        "_value": [4096, 32768, 1024]
-//    }
 }
