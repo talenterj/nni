@@ -1,0 +1,32 @@
+***************** properties *****************
+"updateproportion"="1"
+"scanproportion"="0"
+"workload"="core"
+"readallfields"="true"
+"rocksdb.dir"="/mnt/vdc/rocksdb"
+"dotransactions"="true"
+"readproportion"="0"
+"requestdistribution"="zipfian"
+"operationcount"="1000"
+"recordcount"="10000000"
+"insertproportion"="0"
+**********************************************
+latest_options_filename:/mnt/vdc/rocksdb/OPTIONS-000051
+connect error!
+UPDATE - Takes(s): 0.0, Count: 1000, OPS: 64273.1, Avg(us): 12, Min(us): 6, Max(us): 708, 99th(us): 1000, 99.9th(us): 1000, 99.99th(us): 1000; IntervalTakes(s): 0.0, IntervalCount: 1000, IntervalOPS: 64273.0, IntervalAvg(us): 12, IntervalMin(us): 6, IntervalMax(us): 708, Interval99th(us): 1000, Interval99.9th(us): 1000, Interval99.99th(us): 1000
+** DUMP Statistics **
+Cumulative Takes: 0.0 sec, Interval Takes: 0.0 sec
+Cumulative writes: 1000 writes, 1000 keys, 1000 commit groups, 1.0 writes per commit group, ingest: 0.00 GB, 15.63 MB/s
+Cumulative reads: 1000 keys, read_bytes: 0.00 GB, 7.84 MB/s
+Cumulative scans: 0 seeks, 0 seekfounds, 0 nexts, 0 nextfounds, 0 prevs, 0 prevfounds, iter_read_bytes: 0.00 GB, 0.00 MB/s
+Cumulative WAL: 2000 writes, 0 syncs, 2000.00 writes per sync, written: 0.00 GB, 15.63 MB/s
+Cumulative stall: 0 us, 0.0 percent
+Cumulative compaction: 0.01 GB write, 727.27 MB/s write, 0.00 GB read, 0.00 MB/s read
+Interval writes: 1000 writes, 1000 keys, 1000 commit groups, 1.0 writes per commit group, ingest: 0.27 MB, 15.63 MB/s
+Interval reads: 1000 keys, read_bytes: 0.13 MB, 7.84 MB/s
+Interval scans: 0 seeks, 0 seekfounds, 0 nexts, 0 nextfounds, 0 prevs, 0 prevfounds, iter_read_bytes: 0.00 MB, 0.00 MB/s
+Interval WAL: 2000 writes, 0 syncs, 2000.00 writes per sync, written: 0.27 MB, 15.63 MB/s
+Interval stall: 0 us, 0.0 percent
+Interval compaction: 0.01 GB write, 727.28 MB/s write, 0.00 GB read, 0.00 MB/s read
+
+Run finished, takes 17.014695ms

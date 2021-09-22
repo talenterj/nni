@@ -87,7 +87,7 @@ def run(**parameters):
     list_cpu_avg = []
     list_mem = []
     # create a subprocess to run db_bench
-    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada', '-p'] + args, stdout=subprocess.PIPE)
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
@@ -150,7 +150,7 @@ def generate_params(received_params):
     params = {
         "rocksdb.dir": "/mnt/vdc/rocksdb",
         "rocksdb.write_buffer_size": 2097152,
-        "rocksdb.block_size": 1024
+        "rocksdb.block_size": 4096
         # "max_background_compactions": 4,
         # "write_buffer_size": 67108864,
         # "max_write_buffer_number": 16,
