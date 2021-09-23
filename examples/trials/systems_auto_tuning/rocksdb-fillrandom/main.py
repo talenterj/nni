@@ -87,7 +87,8 @@ def run(**parameters):
     list_cpu_avg = []
     list_mem = []
     # create a subprocess to run db_bench
-    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p', 'operationcount=1000000', '-p'] + args, stdout=subprocess.PIPE)
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
+                                'operationcount=1000000', '-p'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
@@ -181,6 +182,13 @@ if __name__ == "__main__":
         # print(RECEIVED_PARAMS)
         PARAMS = generate_params(RECEIVED_PARAMS)
         LOG.debug(PARAMS)
+        # delete db before trial
+        pythonshutil.rmtree('/mnt/vdc/rocksdb')
+        # os.mkdir('/mnt/vdc/rocksdb')
+        # reload data
+        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
+                                    'recordcount=1000', '-p', 'rocks.db=/mnt/vdc/rocksdb'] + args, stdout=subprocess.PIPE)
+        out_load, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
         LOG.debug(throughput)
