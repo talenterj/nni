@@ -20,7 +20,9 @@ import subprocess
 import logging
 import psutil
 import numpy as np
+import shutil
 
+from pathlib import Path
 from numpy import *
 
 LOG = logging.getLogger('rocksdb-workloada')
@@ -74,7 +76,7 @@ def generate_args(parameters):
         #         args.append("--mmap_write=1")
         #         args.append("--use_direct_io_for_flush_and_compaction=0")
         # else:
-            args.append("{}={}".format(k, v))
+        args.append("{}={}".format(k, v))
     return args
 
 
@@ -90,7 +92,7 @@ def run(**parameters):
     process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
                                 'operationcount=1000000', '-p'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
-    while process.poll() == None:
+    while process.poll() is None:
         list_mem.append(psutil.virtual_memory().used)
         # statistic cpu_percent per 0.1s
         tmp = psutil.cpu_percent(0.1)
@@ -101,7 +103,7 @@ def run(**parameters):
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
     memory_trial_int = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
-    memory_trial = "%s%s" % (memory_trial_int, "G")
+    memory_trial = "%s" % (memory_trial_int)
 
     cpu_90 = int(np.percentile(list_cpu_avg, 90) * 10) / 10
     cpu_95 = int(np.percentile(list_cpu_avg, 95) * 10) / 10
@@ -138,11 +140,15 @@ def run(**parameters):
 
     for line in time_lines:
         _, _, value = line.partition(",")
-        value = value.strip('ms')
         value = value.strip('takes ')
-        time = float(value)
+        if "ms" in line:
+            value = value.strip('ms')
+            time = float(value) / 1000
+        else:
+            value = value.strip('s')
+            time = float(value)
 
-    ops = int((oper_count * 1000 / time) * 10) / 10
+    ops = int((oper_count / time) * 10) / 10
     return ops
 
 
@@ -183,11 +189,13 @@ if __name__ == "__main__":
         PARAMS = generate_params(RECEIVED_PARAMS)
         LOG.debug(PARAMS)
         # delete db before trial
-        pythonshutil.rmtree('/mnt/vdc/rocksdb')
+        if Path('/mnt/vdc/rocksdb'):
+            shutil.rmtree('/mnt/vdc/rocksdb')
         # os.mkdir('/mnt/vdc/rocksdb')
         # reload data
-        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
-                                    'recordcount=1000', '-p', 'rocks.db=/mnt/vdc/rocksdb'] + args, stdout=subprocess.PIPE)
+        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
+                                         '-p', 'recordcount=1000', '-p', 'rocks.db=/mnt/vdc/rocksdb'],
+                                        stdout=subprocess.PIPE)
         out_load, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
