@@ -184,10 +184,10 @@ if __name__ == "__main__":
             shutil.rmtree('/mnt/vdc/rocksdb')
             # os.mkdir('/mnt/vdc/rocksdb')
         # reload data
-        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
-                                         '-p', 'recordcount=100000', '-p', 'rocks.db=/mnt/vdc/rocksdb'],
-                                        stdout=subprocess.PIPE)
-        out_load, err_load = process_load.communicate()
+        # process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
+        #                                  '-p', 'recordcount=100000', '-p', 'rocks.db=/mnt/vdc/rocksdb'],
+        #                                 stdout=subprocess.PIPE)
+        # out_load, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
         LOG.debug(throughput)
