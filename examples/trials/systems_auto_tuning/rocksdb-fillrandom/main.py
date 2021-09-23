@@ -88,9 +88,9 @@ def run(**parameters):
     # print(args)
     list_cpu_avg = []
     list_mem = []
-    # create a subprocess to run db_bench
+    # create a subprocess to run go-ycsb
     process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
-                                'operationcount=1000000', '-p'] + args, stdout=subprocess.PIPE)
+                                'operationcount=1000000', '-p', 'recordcount=10000000', '-p'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() is None:
         list_mem.append(psutil.virtual_memory().used)
@@ -122,7 +122,7 @@ def run(**parameters):
     time_lines = []
     for line in lines:
         # find the line with matched str
-        if 'recordcount' in line:
+        if 'operationcount' in line:
             oper_count_lines.append(line)
         elif 'finish' in line:
             time_lines.append(line)
@@ -158,15 +158,6 @@ def generate_params(received_params):
         "rocksdb.dir": "/mnt/vdc/rocksdb",
         "rocksdb.write_buffer_size": 2097152,
         "rocksdb.block_size": 4096
-        # "max_background_compactions": 4,
-        # "write_buffer_size": 67108864,
-        # "max_write_buffer_number": 16,
-        # "min_write_buffer_number_to_merge": 2,
-        # "level0_file_num_compaction_trigger": 2,
-        # "max_bytes_for_level_base": 268435456,
-        # "max_bytes_for_level_multiplier": 10,
-        # "target_file_size_base": 33554432,
-        # "target_file_size_multiplier": 1
     }
 
     for k, v in received_params.items():
@@ -194,7 +185,7 @@ if __name__ == "__main__":
         # os.mkdir('/mnt/vdc/rocksdb')
         # reload data
         process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
-                                         '-p', 'recordcount=1000', '-p', 'rocks.db=/mnt/vdc/rocksdb'],
+                                         '-p', 'recordcount=10000000', '-p', 'rocks.db=/mnt/vdc/rocksdb'],
                                         stdout=subprocess.PIPE)
         out_load, err_load = process_load.communicate()
         # run benchmark
