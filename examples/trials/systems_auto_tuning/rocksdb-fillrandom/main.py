@@ -90,8 +90,8 @@ def run(**parameters):
     list_cpu_avg = []
     list_mem = []
     # create a subprocess to run go-ycsb
-    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
-                                'operationcount=1000000', '-p', 'recordcount=10000000'] + args, stdout=subprocess.PIPE)
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada', '-p',
+                                'operationcount=1000000'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() is None:
         list_mem.append(psutil.virtual_memory().used)
@@ -187,10 +187,9 @@ if __name__ == "__main__":
         # delete db before trial
         if Path('/mnt/vdc/rocksdb').exists() is True:
             shutil.rmtree('/mnt/vdc/rocksdb/', ignore_errors=True)
-            # os.mkdir('/mnt/vdc/rocksdb')
         # reload data
-        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
-                                         '-p', 'recordcount=10000000', '-p', 'rocksdb.dir=/mnt/vdc/rocksdb'])
+        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada',
+                                         '-p', 'recordcount=1000000', '-p', 'rocksdb.dir=/mnt/vdc/rocksdb'])
         _, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
