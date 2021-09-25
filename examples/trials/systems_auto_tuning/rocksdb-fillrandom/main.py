@@ -25,7 +25,7 @@ import shutil
 from pathlib import Path
 from numpy import *
 
-LOG = logging.getLogger('rocksdb-workloada')
+LOG = logging.getLogger('rocksdb-go-ycsb')
 
 cpu_trial_avg = 0
 memory_trial = 0
@@ -76,6 +76,7 @@ def generate_args(parameters):
         #         args.append("--mmap_write=1")
         #         args.append("--use_direct_io_for_flush_and_compaction=0")
         # else:
+        args.append('-p')
         args.append("{}={}".format(k, v))
     return args
 
@@ -90,7 +91,7 @@ def run(**parameters):
     list_mem = []
     # create a subprocess to run go-ycsb
     process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy', '-p',
-                                'operationcount=1000000', '-p', 'recordcount=10000000', '-p'] + args, stdout=subprocess.PIPE)
+                                'operationcount=1000000', '-p', 'recordcount=10000000'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() is None:
         list_mem.append(psutil.virtual_memory().used)
@@ -132,21 +133,25 @@ def run(**parameters):
 
     oper_count = 1.0
     time = 1.0
-    # db_bench result select throughout ops/s
+    # go-ycsb select operationcount
     for line in oper_count_lines:
         _, _, value = line.partition("=")
         value = value.strip('"')
         oper_count = float(value)
-
+    # get go-ycsb run time(s)
     for line in time_lines:
         _, _, value = line.partition(",")
         value = value.strip('takes ')
-        if "ms" in line:
+        if "ms" in value:
             value = value.strip('ms')
             time = float(value) / 1000
         else:
             value = value.strip('s')
-            time = float(value)
+            if "m" in value:
+                minite, _, sec = value.partition("m")
+                time = float(minite) * 60 + float(sec)
+            else:
+                time = float(value)
 
     ops = int((oper_count / time) * 10) / 10
     return ops
@@ -186,7 +191,7 @@ if __name__ == "__main__":
         # reload data
         process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/writeheavy',
                                          '-p', 'recordcount=10000000', '-p', 'rocksdb.dir=/mnt/vdc/rocksdb'])
-        out_load, err_load = process_load.communicate()
+        _, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
         LOG.debug(throughput)

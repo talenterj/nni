@@ -15,7 +15,7 @@
         "_type": "uniform",
         "_value": [8388608, 536870912]
     },
-     "max_bytes_for_level_multiplier": {
+    "max_bytes_for_level_multiplier": {
         "_type": "quniform",
         "_value": [2, 16, 1]
     },
@@ -23,11 +23,11 @@
         "_type": "quniform",
         "_value": [2, 16, 1]
     },
-     "min_write_buffer_number_to_merge": {
+    "min_write_buffer_number_to_merge": {
         "_type": "quniform",
         "_value": [2, 16, 1]
     },
-   "level0_slowdown_writes_trigger": {
+    "level0_slowdown_writes_trigger": {
         "_type": "quniform",
         "_value": [10, 40, 5]
     },
@@ -43,19 +43,19 @@
         "_type": "uniform",
         "_value": [34359738368, 137438953472]
     },
-  "max_background_jobs": {
+    "max_background_jobs": {
         "_type": "quniform",
         "_value": [2, 16, 1]
     },
- "hard_pending_compaction_bytes_limit": {
+    "hard_pending_compaction_bytes_limit": {
         "_type": "uniform",
         "_value": [137438953472, 549755813888]
     },
-   "optimize_filters_for_hits": {
+    "optimize_filters_for_hits": {
         "_type": "choice",
         "_value": [0, 1]
     },
-   "bloom_bits": {
+    "bloom_bits": {
         "_type": "quniform",
         "_value": [0, 20, 1]
     }
