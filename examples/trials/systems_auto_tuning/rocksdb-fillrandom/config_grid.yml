@@ -1,0 +1,19 @@
+authorName: default
+experimentName: auto_rocksdb_GridSearch
+trialConcurrency: 1
+maxExecDuration: 12h
+maxTrialNum: 1000
+#choice: local, remote, pai
+trainingServicePlatform: local
+searchSpacePath: search_space.json
+#choice: true, false
+useAnnotation: false
+tuner:
+  #choice: TPE, Random, Anneal, Evolution, BatchTuner, MetisTuner
+  #SMAC (SMAC should be installed through nnictl)
+  builtinTunerName: GridSearch
+
+trial:
+  command: python3 main.py
+  codeDir: .
+  gpuNum: 0

@@ -1,15 +1,15 @@
 {
     "rocksdb.write_buffer_size": {
-        "_type": "uniform",
-        "_value": [2097152, 268435456]
+        "_type": "quniform",
+        "_value": [1048576, 1073741824, 1048576]
     },
     "rocksdb.max_write_buffer_number": {
         "_type": "quniform",
         "_value": [1, 8, 1]
     },
-    "rocksdb.block_size": {
-        "_type": "uniform",
-        "_value": [1024, 1048576]
+   "rocksdb.block_size": {
+        "_type": "quniform",
+        "_value": [1024, 1048576, 1024]
     },
     "rocksdb.target_file_size_base": {
         "_type": "uniform",

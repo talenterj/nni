@@ -82,16 +82,24 @@ def generate_args(parameters):
 
 
 def run(**parameters):
-    '''Run rocksdb benchmark and return throughput'''
-    # bench_type = parameters['benchmarks']
+    '''Run rocksdb go-ycsb and return throughput'''
     # recover args
     args = generate_args(parameters)
-    # print(args)
+
+    # delete db before trial
+    if Path('/mnt/vdc/rocksdb').exists() is True:
+        shutil.rmtree('/mnt/vdc/rocksdb/', ignore_errors=True)
+
+    # create a subprocess to load go-ycsb data
+    process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/pntlookup80'] + args)
+    # subprocess.wait() wait until sunbprocess finished
+    _ = process_load.wait()
+
+    # create a subprocess to run go-ycsb
+    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/pntlookup80'] + args,
+                               stdout=subprocess.PIPE)
     list_cpu_avg = []
     list_mem = []
-    # create a subprocess to run go-ycsb
-    process = subprocess.Popen(['go-ycsb', 'run', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada', '-p',
-                                'operationcount=1000000'] + args, stdout=subprocess.PIPE)
     # process.poll() detect subprocess finished
     while process.poll() is None:
         list_mem.append(psutil.virtual_memory().used)
@@ -99,12 +107,12 @@ def run(**parameters):
         tmp = psutil.cpu_percent(0.1)
         list_cpu_avg.append(tmp)
     
-    # in python global var need to state in local func first
+    # state global var
     global cpu_trial_avg
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
     memory_trial_int = int(mean(list_mem) / 1024 / 1024 / 1024 * 100) / 100
-    memory_trial = "%s" % (memory_trial_int)
+    memory_trial = "%s" % memory_trial_int
 
     cpu_90 = int(np.percentile(list_cpu_avg, 90) * 10) / 10
     cpu_95 = int(np.percentile(list_cpu_avg, 95) * 10) / 10
@@ -125,7 +133,7 @@ def run(**parameters):
         # find the line with matched str
         if 'operationcount' in line:
             oper_count_lines.append(line)
-        elif 'finish' in line:
+        elif 'finished' in line:
             time_lines.append(line)
             break
         else:
@@ -160,9 +168,10 @@ def run(**parameters):
 def generate_params(received_params):
     '''generate parameters based on received parameters'''
     params = {
+        "recordcount": 1000000,
+        "operationcount": 1000000,
         "rocksdb.dir": "/mnt/vdc/rocksdb",
-        "rocksdb.write_buffer_size": 2097152,
-        "rocksdb.block_size": 4096
+        "rocksdb.write_buffer_size": 2097152
     }
 
     for k, v in received_params.items():
@@ -184,13 +193,6 @@ if __name__ == "__main__":
         # print(RECEIVED_PARAMS)
         PARAMS = generate_params(RECEIVED_PARAMS)
         LOG.debug(PARAMS)
-        # delete db before trial
-        if Path('/mnt/vdc/rocksdb').exists() is True:
-            shutil.rmtree('/mnt/vdc/rocksdb/', ignore_errors=True)
-        # reload data
-        process_load = subprocess.Popen(['go-ycsb', 'load', 'rocksdb', '-P', '/root/zcj/go-ycsb/workloads/workloada',
-                                         '-p', 'recordcount=1000000', '-p', 'rocksdb.dir=/mnt/vdc/rocksdb'])
-        _, err_load = process_load.communicate()
         # run benchmark
         throughput = run(**PARAMS)
         LOG.debug(throughput)

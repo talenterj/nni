@@ -1,0 +1,10 @@
+{
+    "rocksdb.write_buffer_size": {
+        "_type": "quniform",
+        "_value": [1048576, 1073741824, 1048576]
+    },
+    "rocksdb.block_size": {
+        "_type": "quniform",
+        "_value": [1024, 1048576, 1024]
+    }
+}
