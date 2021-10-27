@@ -30,7 +30,7 @@ memory_trial = 0
 list_cpu_result = []
 
 def generate_args(parameters):
-    args = []
+    args = ["--statistics "]
     # Set low priority parameters based on high priority parameters
     # if parameters['memtablerep'] != "skip_list":
     #     parameters['allow_concurrent_memtable_write'] = False
@@ -85,16 +85,16 @@ def run(**parameters):
     # print(args)
     list_cpu_avg = []
     list_mem = []
-    #create a sbuprocess to run db_bench
+    # create a sbuprocess to run db_bench
     process = subprocess.Popen(['db_bench'] + args, stdout=subprocess.PIPE)
-    #process.poll() detect subprocess finished ;A None value indicates that the process hasn’t terminated yet.A negative value -N indicates that the child was terminated by signal N
+    # process.poll() detect subprocess finished ;A None value indicates that the process hasn’t terminated
     while process.poll() == None:
         list_mem.append(psutil.virtual_memory().used)
-        #statistic cpu_percent per 0.1s
+        # statistic cpu_percent per 0.1s
         tmp = psutil.cpu_percent(0.1)
         list_cpu_avg.append(tmp)
     
-    #in python global var need to state in local func first
+    # in python global var need to state in local func first
     global cpu_trial_avg
     cpu_trial_avg = int(mean(list_cpu_avg) * 10) / 10
     global memory_trial
@@ -115,34 +115,56 @@ def run(**parameters):
     # split into lines
     lines = out.decode("utf8").splitlines()
 
+    # match_lines = []
+    # for line in lines:
+    #     # find the line with matched str
+    #     if bench_type not in line:
+    #         continue
+    #     else:
+    #         match_lines.append(line)
+    #         break
+    #
+    # results = {}
+    # #db_bench result select throughout ops/s
+    # for line in match_lines:
+    #     key, _, value = line.partition(":")
+    #     key = key.strip()
+    #     value = value.split("op")[1]
+    #     results[key] = float(value)
+    #
+    # return results[bench_type]
+
     match_lines = []
+    get_micros = "rocksdb.db.get.micros"
     for line in lines:
         # find the line with matched str
-        if bench_type not in line:
+        if get_micros not in line:
             continue
         else:
             match_lines.append(line)
             break
 
     results = {}
-    #db_bench result select throughout ops/s
+    key = "latency"
+    # db_bench result select throughout ops/s
     for line in match_lines:
-        key, _, value = line.partition(":")
-        key = key.strip()
-        value = value.split("op")[1]
+        _, _, value = line.partition("P99")
+        value, _, _ = value.partition("P100")
+        value = value.strip(' ')
+        value = value.strip(':')
+        value = value.strip(' ')
         results[key] = float(value)
-
-    return results[bench_type]
-
+    return results[key]
 
 def generate_params(received_params):
     '''generate parameters based on received parameters'''
     params = {
-        "benchmarks": "fillrandom",
+        "benchmarks": "fillseq,readrandom",
         "threads": 1,
         "key_size": 16,
         "value_size": 100,
         "num": 10000000,
+        "reads": 1000000,
         "db": "/mnt/vdc/rocksdb",
         "disable_wal": 1,
         "max_background_flushes": 1,
