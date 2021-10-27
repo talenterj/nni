@@ -30,7 +30,7 @@ memory_trial = 0
 list_cpu_result = []
 
 def generate_args(parameters):
-    args = ["--statistics "]
+    args = []
     # Set low priority parameters based on high priority parameters
     # if parameters['memtablerep'] != "skip_list":
     #     parameters['allow_concurrent_memtable_write'] = False
@@ -79,9 +79,10 @@ def generate_args(parameters):
 
 def run(**parameters):
     '''Run rocksdb benchmark and return throughput'''
-    bench_type = parameters['benchmarks']
+    # bench_type = parameters['benchmarks']
     # recover args
     args = generate_args(parameters)
+    args.append("--statistics")
     # print(args)
     list_cpu_avg = []
     list_mem = []
@@ -144,8 +145,7 @@ def run(**parameters):
             match_lines.append(line)
             break
 
-    results = {}
-    key = "latency"
+
     # db_bench result select throughout ops/s
     for line in match_lines:
         _, _, value = line.partition("P99")
@@ -153,18 +153,20 @@ def run(**parameters):
         value = value.strip(' ')
         value = value.strip(':')
         value = value.strip(' ')
-        results[key] = float(value)
-    return results[key]
+        # print(value)
+        return float(value)
 
 def generate_params(received_params):
     '''generate parameters based on received parameters'''
     params = {
-        "benchmarks": "fillseq,readrandom",
+        "benchmarks": "readrandom",
         "threads": 1,
         "key_size": 16,
         "value_size": 100,
+        "duration": 30,
         "num": 10000000,
-        "reads": 1000000,
+        "use_existing_db": 1,
+        "use_existing_keys": 1,
         "db": "/mnt/vdc/rocksdb",
         "disable_wal": 1,
         "max_background_flushes": 1,
